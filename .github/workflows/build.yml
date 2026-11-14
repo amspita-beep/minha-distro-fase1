@@ -1,0 +1,30 @@
+name: Compilar ISO Fase 1
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar código do repositório
+        uses: actions/checkout@v4
+
+      - name: Instalar dependências de construção
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y live-build debootstrap squashfs-tools xorriso grub-pc-bin grub-efi-amd64-bin mtools dosfstools
+
+      - name: Executar compilação da ISO
+        run: |
+          chmod +x build.sh
+          ./build.sh
+
+      - name: Disponibilizar ISO para Download
+        uses: actions/upload-artifact@v4
+        with:
+          name: CustomLinux-Fase1-ISO
+          path: custom-linux-fase1.iso
+          retention-days: 7
